@@ -1,0 +1,252 @@
+# Bot Configuration
+bot:
+  name: "Torn Mug Bot"
+  version: "1.0.0"
+  description: "Automated bazaar monitoring for mug targets"
+
+# Monitoring Settings
+monitoring:
+  check_interval: 15  # seconds
+  top_bazaars_count: 12  # Only monitor top N cheapest listings
+  weav3r_batch_size: 10  # Number of items to fetch concurrently
+  weav3r_batch_delay: 1.0  # Seconds to wait between batches (adjust to test Cloudflare limits)
+
+# VIP Players (always monitored, never dropped)
+vip_players:
+  - 3929345  # Your ID
+  # Add more IDs here as needed
+  
+# Items to Monitor
+items:
+  - item_id: 206
+    name: "Xanax"
+    enabled: true
+  
+  - item_id: 4
+    name: "Drug Pack"
+    enabled: true
+
+  - item_id: 366
+    name: "Erotic DVD"
+    enabled: true
+  
+  - item_id: 367
+    name: "Feathery Hotel Coupon"
+    enabled: true
+
+  - item_id: 283
+    name: "Donator Pack"
+    enabled: true
+
+  - item_id: 555
+    name: "Can of X-MASS"
+    enabled: true
+
+  - item_id: 533
+    name: "Can of Taurine Elite"
+    enabled: true
+
+  - item_id: 106
+    name: "Parachute"
+    enabled: true
+
+  - item_id: 331
+    name: "Dumbbells"
+    enabled: true
+
+  - item_id: 330
+    name: "Boxing Gloves"
+    enabled: true
+
+  - item_id: 329
+    name: "Skateboard"
+    enabled: true
+    
+  - item_id: 666
+    name: "Assault Body"
+    enabled: true
+    
+  - item_id: 668
+    name: "Assault Boots"
+    enabled: true
+    
+  - item_id: 669
+    name: "Assault Gloves"
+    enabled: true
+    
+  - item_id: 665
+    name: "Assault Helmet"
+    enabled: true
+    
+  - item_id: 667
+    name: "Assault Pants"
+    enabled: true
+    
+  - item_id: 671
+    name: "Delta Body"
+    enabled: true
+    
+  - item_id: 673
+    name: "Delta Boots"
+    enabled: true
+    
+  - item_id: 670
+    name: "Delta Gas Mask"
+    enabled: true
+    
+  - item_id: 674
+    name: "Delta Gloves"
+    enabled: true
+    
+  - item_id: 672
+    name: "Delta Pants"
+    enabled: true
+    
+  - item_id: 663
+    name: "Dune Boots"
+    enabled: true
+    
+  - item_id: 664
+    name: "Dune Gloves"
+    enabled: true
+    
+  - item_id: 660
+    name: "Dune Helmet"
+    enabled: true
+    
+  - item_id: 662
+    name: "Dune Pants"
+    enabled: true
+    
+  - item_id: 661
+    name: "Dune Vest"
+    enabled: true
+    
+  - item_id: 681
+    name: "EOD Apron"
+    enabled: true
+    
+  - item_id: 683
+    name: "EOD Boots"
+    enabled: true
+    
+  - item_id: 684
+    name: "EOD Gloves"
+    enabled: true
+    
+  - item_id: 682
+    name: "EOD Pants"
+    enabled: true
+    
+  - item_id: 348
+    name: "Hazmat Suit"
+    enabled: true
+    
+  - item_id: 1167
+    name: "M'aol Hooves"
+    enabled: true
+    
+  - item_id: 676
+    name: "Marauder Body"
+    enabled: true
+    
+  - item_id: 678
+    name: "Marauder Boots"
+    enabled: true
+    
+  - item_id: 675
+    name: "Marauder Face Mask"
+    enabled: true 
+    
+  - item_id: 679
+    name: "Marauder Gloves"
+    enabled: true
+
+  - item_id: 1120
+    name: "Small Arms Cache"
+    enabled: true
+
+  - item_id: 1119
+    name: "Melee Cache"
+    enabled: true
+
+  - item_id: 1121
+    name: "Medium Arms Cache"
+    enabled: true
+
+  - item_id: 1118
+    name: "Armor Cache"
+    enabled: true
+
+  - item_id: 1122
+    name: "Heavy Arms Cache"
+    enabled: true
+
+  - item_id: 818
+    name: "Six-Pack of Energy Drink"
+    enabled: true
+
+  - item_id: 588
+    name: "Goodie Bag"
+    enabled: true
+
+  - item_id: 865
+    name: "Poison Mistletoe"
+    enabled: true
+
+  - item_id: 337
+    name: "Dirty Bomb"
+    enabled: true
+
+  - item_id: 421
+    name: "Large Suitcase"
+    enabled: true
+
+  - item_id: 384
+    name: "Camel Plushie"
+    enabled: true
+
+  - item_id: 385
+    name: "Tribulus Omanense"
+    enabled: true
+    
+  - item_id: 258
+    name: "First Aid Kit"
+    enabled: false  # Disabled for now
+  
+  # Add more items here:
+  # - item_id: XXX
+  #   name: "Item Name"
+  #   enabled: true
+
+# Alert Settings
+alerts:
+  min_accumulated: 25  # $25M
+  min_inactivity_minutes: 1
+  
+# Target Status Handling
+status_handling:
+  skip_federal: true  # Don't alert on Federal players
+  traveling_note: "🛫 Traveling - Mug when lands"
+  jail_note: "⛓️ In Jail - Mug when busted"
+  hospital_note: "🏥 In Hospital"
+
+# Database
+database:
+  path: "data/mug_bot.db"
+  retention_days: 3
+  cleanup_interval: 28800  # 8 hours in seconds
+
+# API Settings
+api:
+  weav3r_base_url: "https://weav3r.dev/api/marketplace"
+  torn_base_url: "https://api.torn.com/v2"
+  request_timeout: 10  # seconds
+  max_retries: 2
+
+# Logging
+logging:
+  level: "INFO"
+  file: "mug_bot.log"
+  max_size_mb: 50
+  backup_count: 5
