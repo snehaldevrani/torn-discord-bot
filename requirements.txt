@@ -1,18 +1,19 @@
 # Discord
-discord.py==2.3.2
+discord.py==2.4.0
 
 # HTTP Requests
-aiohttp==3.9.1
-requests==2.31.0
+aiohttp==3.10.11
+requests==2.32.3
 
 # Configuration
-python-dotenv==1.0.0
-PyYAML==6.0.1
+python-dotenv==1.0.1
+PyYAML==6.0.2
 
 # Database
-aiosqlite==0.19.0
+aiosqlite==0.20.0
 
 # Utilities
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
 
-curl-cffi>=0.5.0
+# Cloudflare bypass
+curl-cffi==0.7.3
