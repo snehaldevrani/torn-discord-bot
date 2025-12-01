@@ -41,7 +41,7 @@ class SaleDetector:
         logger.info(f"🔍 Scanning weav3r for top {top_n} listings across {len(items)} items...")
         
         # Fetch all items in parallel with semaphore
-        semaphore = asyncio.Semaphore(15)
+        semaphore = asyncio.Semaphore(60)
         
         async def fetch_with_semaphore(item):
             async with semaphore:

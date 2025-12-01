@@ -28,6 +28,14 @@ class TornAPIClient:
         self.base_url = base_url
         self.timeout = aiohttp.ClientTimeout(total=timeout)
         self.max_retries = max_retries
+        self.session = None  # ADD THIS
+        
+    async def _get_session(self):
+        """Get or create persistent session."""
+        if self.session is None or self.session.closed:
+            self.session = aiohttp.ClientSession(timeout=self.timeout)
+        return self.session
+
     
     async def fetch_user_data(self, user_id: int) -> Optional[dict]:
         """
@@ -104,49 +112,32 @@ class TornAPIClient:
         }
         
         try:
-            async with aiohttp.ClientSession(timeout=self.timeout) as session:
-                async with session.get(url, params=params) as response:
-                    if response.status != 200:
-                        logger.warning(f"Torn API returned status {response.status} for user {user_id}")
-                        return None
+            session = await self._get_session()  # CHANGE THIS LINE
+            async with session.get(url, params=params) as response:
+                if response.status != 200:
+                    logger.warning(f"Torn API returned status {response.status} for user {user_id}")
+                    return None
                     
-                    data = await response.json()
+                data = await response.json()
                     
-                    # Check for API errors
-                    if 'error' in data:
-                        await self._handle_api_error(data['error'], api_key)
-                        return None
+                # Check for API errors
+                if 'error' in data:
+                    await self._handle_api_error(data['error'], api_key)
+                    return None
                     
-                    # Parse profile data
-                    # Parse profile and job data
-                    # Extract data
-                    bazaar_data = data.get('bazaar', [])
-                    bazaar_is_open = data.get('bazaar_is_open', True)  # Default to True if not present
-                    profile_data = data.get('profile')
-                    job_data = data.get('job')
+                # Parse profile data
+                # Parse profile and job data
+                # Extract data
+                bazaar_data = data.get('bazaar', [])
+                bazaar_is_open = data.get('bazaar_is_open', True)  # Default to True if not present
+                profile_data = data.get('profile')
+                job_data = data.get('job')
 
-                    # If bazaar is closed, return empty list (don't treat as sales)
-                    if not bazaar_is_open:
-                        logger.debug(f"🚫 Player {user_id} has closed their bazaar")
-                        formatted_bazaar = []
-                    else:
-                        # Format bazaar data
-                        formatted_bazaar = []
-                        for item in bazaar_data:
-                            formatted_bazaar.append({
-                                'item_id': item.get('ID'),
-                                'name': item.get('name'),
-                                'quantity': item.get('quantity'),
-                            'price': item.get('price')
-                            })
-
-                    if not profile_data:
-                        logger.error(f"❌ No profile data in response for user {user_id}")
-                        return None
-
-                    # Parse profile
-                    parsed_profile = parse_profile_response(profile_data, job_data)
-
+                # If bazaar is closed, return empty list (don't treat as sales)
+                if not bazaar_is_open:
+                    logger.debug(f"🚫 Player {user_id} has closed their bazaar")
+                    formatted_bazaar = []
+                else:
                     # Format bazaar data
                     formatted_bazaar = []
                     for item in bazaar_data:
@@ -157,24 +148,41 @@ class TornAPIClient:
                             'price': item.get('price')
                         })
 
-                    logger.debug(
-                        f"✅ Fetched player {user_id}: {len(formatted_bazaar)} bazaar items, "
-                        f"Status: {parsed_profile['status_state']}"
-                    )
+                if not profile_data:
+                    logger.error(f"❌ No profile data in response for user {user_id}")
+                    return None
 
-                    return {
-                        'bazaar': formatted_bazaar,
-                        'bazaar_is_open': bazaar_is_open,  # ADD THIS
-                        'profile_data': parsed_profile,
-                        'job_data': job_data
-                    }
+                # Parse profile
+                parsed_profile = parse_profile_response(profile_data, job_data)
+
+                # Format bazaar data
+                formatted_bazaar = []
+                for item in bazaar_data:
+                    formatted_bazaar.append({
+                        'item_id': item.get('ID'),
+                        'name': item.get('name'),
+                        'quantity': item.get('quantity'),
+                        'price': item.get('price')
+                    })
+
+                logger.debug(
+                    f"✅ Fetched player {user_id}: {len(formatted_bazaar)} bazaar items, "
+                    f"Status: {parsed_profile['status_state']}"
+                )
+
+                return {
+                    'bazaar': formatted_bazaar,
+                    'bazaar_is_open': bazaar_is_open,  # ADD THIS
+                    'profile_data': parsed_profile,
+                    'job_data': job_data
+                }
         
         except aiohttp.ClientError as e:
             logger.error(f"Network error fetching profile for user {user_id}: {e}")
             return None
         
         except Exception as e:
-            logger.error(f"Unexpected error fetching profile for user {user_id}: {e}")
+            logger.error(f"Unexpected error fetching profile for user {user_id}: {e}", exc_info=True)
             return None
     
     async def _make_icons_request(self, user_id: int, api_key: str) -> Optional[list]:
@@ -194,23 +202,23 @@ class TornAPIClient:
         }
     
         try:
-            async with aiohttp.ClientSession(timeout=self.timeout) as session:
-                async with session.get(url, params=params) as response:
-                    if response.status != 200:
-                        logger.warning(f"❌ Icons API returned status {response.status} for user {user_id}")
-                        return None
+            session = await self._get_session()
+            async with session.get(url, params=params) as response:
+                if response.status != 200:
+                    logger.warning(f"❌ Icons API returned status {response.status} for user {user_id}")
+                    return None
                 
-                    data = await response.json()
+                data = await response.json()
                 
-                    # Check for API errors
-                    if 'error' in data:
-                        await self._handle_api_error(data['error'], api_key)
-                        return None
+                # Check for API errors
+                if 'error' in data:
+                    await self._handle_api_error(data['error'], api_key)
+                    return None
                 
-                    # Return icons list
-                    icons = data.get('icons', [])
-                    logger.debug(f"✅ Fetched {len(icons)} icons for user {user_id}")
-                    return icons
+                # Return icons list
+                icons = data.get('icons', [])
+                logger.debug(f"✅ Fetched {len(icons)} icons for user {user_id}")
+                return icons
     
         except aiohttp.ClientError as e:
             logger.error(f"❌ Network error fetching icons for user {user_id}: {e}")
@@ -270,6 +278,11 @@ class TornAPIClient:
         """
         import asyncio
         await asyncio.sleep(seconds)
+        
+    async def close(self):
+        """Close the persistent session."""
+        if self.session and not self.session.closed:
+            await self.session.close()
 
 
 # Global instance

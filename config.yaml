@@ -221,7 +221,7 @@ items:
 
 # Alert Settings
 alerts:
-  min_accumulated: 25  # $25M
+  min_accumulated: 25000000  # $25M
   min_inactivity_minutes: 1
   
 # Target Status Handling

@@ -204,20 +204,20 @@ class Database:
         WARNING: Deletes all data!
         """
         await self.connect()
-        
-        tables = ['current_bazaar_state', 'tracked_targets', 'alert_log', 'monitored_items']
-        
+    
+        tables = ['player_bazaar_snapshots', 'tracked_targets', 'alert_log', 'transaction_log']
+    
         for table in tables:
             await self.conn.execute(f"DELETE FROM {table}")
-        
+    
         await self.conn.commit()
         logger.warning("Database reset - all data deleted!")
     
-    async def vacuum(self):
-        """Optimize database by reclaiming space."""
-        await self.connect()
-        await self.conn.execute("VACUUM")
-        logger.info("Database vacuumed")
+        async def vacuum(self):
+            """Optimize database by reclaiming space."""
+            await self.connect()
+            await self.conn.execute("VACUUM")
+            logger.info("Database vacuumed")
 
 
 # Singleton instance

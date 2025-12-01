@@ -124,8 +124,11 @@ class MugBot(commands.Bot):
         
         # Send shutdown message
         try:
-            alerter = get_alerter()
-            await alerter.send_info_message("🛑 **Mug Bot Stopped** - Monitoring paused")
+            from api.torn import get_torn_client  # ADD THIS
+            torn_client = get_torn_client()       # ADD THIS
+            await torn_client.close() 
+            # alerter = get_alerter()
+            # await alerter.send_info_message("🛑 **Mug Bot Stopped** - Monitoring paused")
         except:
             pass
         

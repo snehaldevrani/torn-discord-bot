@@ -160,6 +160,11 @@ async def main():
     
     # Initialize database
     await initialize_database(config)
+    # Reset database on startup (clear old data)
+    logger.info("Resetting database (clearing old tracking data)...")
+    db = get_database()
+    await db.reset_database()
+    logger.info("Database reset complete")
     
     # Initialize API keys
     await initialize_api_keys()

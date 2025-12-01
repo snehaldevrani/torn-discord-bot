@@ -65,7 +65,7 @@ class Monitor:
         # Send startup message to Discord
         try:
             alerter = get_alerter()
-            await alerter.send_info_message("✅ **Mug Bot Started** - Monitoring bazaars for targets...")
+            # await alerter.send_info_message("✅ **Mug Bot Started** - Monitoring bazaars for targets...")
         except:
             pass
         
@@ -135,7 +135,7 @@ class Monitor:
             # ============================================
             logger.info(f"🚀 Phase 4: Fetching data for {len(active_monitoring)} players in parallel...")
         
-            semaphore = asyncio.Semaphore(20)  # Limit concurrent requests
+            semaphore = asyncio.Semaphore(100)  # Limit concurrent requests
         
             async def monitor_player(player_id):
                 async with semaphore:
@@ -264,6 +264,14 @@ class Monitor:
             # Log cycle stats
             # ============================================
             cycle_duration = (datetime.now() - cycle_start).total_seconds()
+            
+            from api.key_manager import get_key_manager
+            key_stats = get_key_manager().get_stats()
+            logger.info(
+                f"🔑 API Keys - Active: {key_stats['active']}, "
+                f"Rate Limited: {key_stats['rate_limited']}, "
+                f"Bad: {key_stats['permanently_bad']}"
+            )
             logger.info(
                 f"--- Cycle #{self.cycle_count} completed in {cycle_duration:.2f}s "
                 f"(Sales: {len(all_sales)}, Alerts: {len(targets_to_alert) if targets_to_alert else 0}) ---"
