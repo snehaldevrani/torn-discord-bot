@@ -1,20 +1,8 @@
-# Discord
-discord.py==2.4.0
-pyaudioop-lts==0.2.1  # Add this line
-
-# HTTP Requests
+discord.py==2.5.1
 aiohttp==3.10.11
 requests==2.32.3
-
-# Configuration
 python-dotenv==1.0.1
 PyYAML==6.0.2
-
-# Database
 aiosqlite==0.20.0
-
-# Utilities
 python-dateutil==2.9.0.post0
-
-# Cloudflare bypass
 curl-cffi==0.7.3
